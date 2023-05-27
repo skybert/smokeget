@@ -1,0 +1,211 @@
+#! /usr/bin/env bash
+
+## author: torstein, torstein@skybert.net
+
+# set -o errexit
+set -o nounset
+set -o pipefail
+
+sg_max_time=20
+sg_interval_in_seconds=2
+sg_output=gnuplot
+sg_gnuplot_data_file=/tmp/smoke.txt
+sg_gnuplot_output_file=/tmp/smoke.svg
+sg_quiet=false
+
+sg__is_output_gnuplot() {
+  [[ "${sg_output}" == "gnuplot" ]]
+}
+
+sg__read_user_input() {
+  local opts=
+  opts=$(getopt \
+           -o ho:nvt: \
+           --long help \
+           --long data: \
+           --long max-time: \
+           --long output: \
+           --long dry-run \
+           --long verbose \
+           --long clear \
+           --long quiet \
+           -n 'parse-options' \
+           -- "$@")
+  if [ $? != 0 ] ; then
+    echo "Failed parsing options." >&2
+    exit 1
+  fi
+  eval set -- "$opts"
+
+  while true; do
+    case "$1" in
+      -h | --help)
+        print_help;
+        exit 0
+        break;;
+      -t | --max-time)
+        export sg_max_time=$2
+        shift 2;;
+      -o | --output)
+        export sg_gnuplot_output_file=$2
+        shift 2;;
+      -d | --data)
+        export sg_gnuplot_data_file=$2
+        shift 2;;
+      -n | --dry-run)
+        export dry_run=1
+        shift;;
+      -v | --verbose)
+        export verbose=1
+        shift;;
+      --clear)
+        export sg_clear=true
+        shift;;
+      -- )
+        shift;
+        break ;;
+      * )
+        break ;;
+    esac
+  done
+
+  export sg_uri=$*
+}
+
+sg__register_down() {
+  "${sg_quiet}" || printf "%s" "E"
+
+  if sg__is_output_gnuplot; then
+    printf "%s\\n" "$(date +%Y-%m-%d-%H:%M:%S) 0" >> "${sg_gnuplot_data_file}"
+  fi
+}
+
+sg__register_up() {
+  if sg__is_output_gnuplot; then
+    printf "%s\\n" "$(date +%Y-%m-%d-%H:%M:%S) 1" >> "${sg_gnuplot_data_file}"
+  else
+    echo -n .
+  fi
+}
+
+sg__register() {
+  local _uri=$1
+  local _time=$2
+
+  "${sg_quiet}" || printf "%s" "."
+
+  if sg__is_output_gnuplot; then
+    printf "%s %s\\n" "$(date +%Y-%m-%d-%H:%M:%S)" "${_time}" >> "${sg_gnuplot_data_file}"
+  else
+    echo -n "${_time} "
+  fi
+}
+
+sg__calculate_elapsed_time() {
+  local _start=$1
+  local _stop=$2
+
+  if [[ "${_start:0:1}" == 0 ]]; then
+    _start=${_start:1}
+  fi
+  if [[ "${_stop:0:1}" == 0 ]]; then
+    _stop=${_stop:1}
+  fi
+
+  printf "%s\\n" $(( _stop - _start ))
+}
+
+sg__time_to_seconds() {
+  local _time=$1
+
+  IFS=' ' read -r _minutes _seconds <<< "${_time}"
+  printf "%s + %s\\n" "${_minutes}" "${_seconds}" | bc
+}
+
+
+sg__get_smoke_from_uri() {
+  local _uri=$1
+
+  local _time=
+  _time=$(
+    {
+      time curl --max-time "${sg_max_time}" \
+           --location \
+           --silent \
+           --fail \
+           --output /dev/null "${_uri}"
+    } 2>&1 |
+      sed -nr 's#real[ \t]+([0-9\.]+)m([0-9\.]+)s#\1 \2#p')
+
+  if [ "${?}" -gt 0 ]; then
+    sg__register_down
+    return
+  fi
+
+  local _seconds=
+  _seconds=$(sg__time_to_seconds "${_time}")
+
+  sg__register "${_uri}" "${_seconds}"
+}
+
+sg__should_follow() {
+  true
+}
+
+sg__clean_the_slate() {
+  "${sg_clear-false}" && {
+    rm -rf "${_dir}"
+    mkdir -p "${_dir}"
+
+  }
+}
+
+sg__prepare_plot() {
+  local _cwd=
+  _cwd="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+
+  local _pretty_name=
+  _pretty_name=$(basename "${sg_uri}" | tr -d '?')
+
+  ## TODO remove
+  printf "%s\\n" "${_pretty_name}"
+  local _dir=/tmp/"${_pretty_name}"
+  mkdir -p "${_dir}"
+
+  sg__clean_the_slate
+
+  sg_gnuplot_data_file=${_dir}/data.txt
+
+  cp "${_cwd}"/../lib/smokeget.gnuplot "${_dir}"/.
+  sed -i "s#URL#${sg_uri}#" "${_dir}/smokeget.gnuplot"
+  sed -i "s#DATA#${sg_gnuplot_data_file}#" "${_dir}/smokeget.gnuplot"
+  sed -i "s#OUTPUT#${sg_gnuplot_output_file}#" "${_dir}/smokeget.gnuplot"
+  sed -i "s#MAX_TIME#${sg_max_time}#" "${_dir}/smokeget.gnuplot"
+
+  export sg_gnuplot_input_file=${_dir}/smokeget.gnuplot
+
+  printf "SmokeGET graph of ${sg_uri}: %s\\n" \
+         "${sg_gnuplot_output_file}"
+}
+
+sg__update_plot() {
+  command -v gnuplot &> /dev/null && {
+    gnuplot "${sg_gnuplot_input_file}"
+  }
+}
+
+
+main() {
+  sg__read_user_input "$@"
+  sg__prepare_plot
+
+  local _not_first=false
+  while true; do
+    sg__get_smoke_from_uri "${sg_uri}"
+    "${_not_first}" && sg__update_plot
+    _not_first=true
+    sleep "${sg_interval_in_seconds}"
+  done
+}
+
+main "$@"
