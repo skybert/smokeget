@@ -2,20 +2,15 @@
 
 ## author: torstein, torstein@skybert.net
 
-# set -o errexit
+set -o errexit
 set -o nounset
 set -o pipefail
 
 sg_max_time=20
 sg_interval_in_seconds=2
-sg_output=gnuplot
 sg_gnuplot_data_file=/tmp/smoke.txt
 sg_gnuplot_output_file=/tmp/smoke.svg
 sg_quiet=false
-
-sg__is_output_gnuplot() {
-  [[ "${sg_output}" == "gnuplot" ]]
-}
 
 sg__print_help() {
   cat <<EOF
@@ -129,14 +124,6 @@ sg__calculate_elapsed_time() {
   printf "%s\\n" $(( _stop - _start ))
 }
 
-sg__time_to_seconds() {
-  local _time=$1
-
-  IFS=' ' read -r _minutes _seconds <<< "${_time}"
-  printf "%s + %s\\n" "${_minutes}" "${_seconds}" | bc
-}
-
-
 sg__get_smoke_from_uri() {
   local _uri=$1
 
@@ -160,10 +147,6 @@ sg__get_smoke_from_uri() {
   _seconds=$(sg__time_to_seconds "${_time}")
 
   sg__register "${_uri}" "${_seconds}"
-}
-
-sg__should_follow() {
-  true
 }
 
 sg__clean_the_slate() {
@@ -210,7 +193,16 @@ sg__update_plot() {
 }
 
 
+sg__bootstrap_thyself() {
+  local _cwd=
+  _cwd="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+
+  source "${_cwd}"/../lib/"$(basename "${0}")"-lib.sh
+}
+
+
 main() {
+  sg__bootstrap_thyself
   sg__read_user_input "$@"
   sg__prepare_plot
 
