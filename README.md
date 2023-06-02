@@ -6,7 +6,7 @@
 ```text
 $ smokeget --clear https://skybert.net
 SmokeGET graph data dir: /tmp/smokeget/skybert.net
-SmokeGET graph of https://stibodx.com: /tmp/smoke.svg
+SmokeGET graph of https://skybert.net: /tmp/smoke.svg
 .................................EE...............................
 ```
 
