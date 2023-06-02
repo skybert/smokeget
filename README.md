@@ -1,8 +1,11 @@
 # SmokeGET - Zero conf server monitoring with nice graphs
 
+<img src="smokeget.svg" alt="smokeget graph"/>
+
 ```text
 $ smokeget --clear https://skybert.net
-SmokeGET graph of https://skybert.net: /tmp/smoke.svg
+SmokeGET graph data dir: /tmp/smokeget/skybert.net
+SmokeGET graph of https://stibodx.com: /tmp/smoke.svg
 .................................EE...............................
 ```
 

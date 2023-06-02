@@ -164,7 +164,7 @@ sg__prepare_plot() {
   local _pretty_name=
   _pretty_name=$(sg__pretty_name "${sg_uri}")
 
-  local _dir=/tmp/"${_pretty_name}"
+  local _dir=/tmp/smokeget/"${_pretty_name}"
   mkdir -p "${_dir}"
   printf "SmokeGET graph data dir: %s\\n" "${_dir}"
 
