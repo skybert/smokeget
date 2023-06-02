@@ -5,7 +5,6 @@ set ylabel "Response time in seconds"
 set xdata time
 set timefmt "%Y-%m-%d-%H:%M:%S"
 set format x "%H:%M"
-# set yrange [ 0 : MAX_TIME ]
 
 # Output as an SVG
 set term svg
