@@ -1,6 +1,6 @@
 # SmokeGET - Zero conf server monitoring with nice graphs
 
-<img src="smokeget.svg" alt="smokeget graph"/>
+<img src="smokeget.png" alt="smokeget graph"/>
 
 ## Usage
 ```text
