@@ -12,7 +12,8 @@ SmokeGET graph of https://stibodx.com: /tmp/smoke.svg
 
 If the server responds within `--max-time`, a dot is written and the
 response time is noted on the graph. If not, an `E` is written to the
-console.
+console. `smokeget` will also record an error if the website responds
+with an HTTP error code greater or equal to `400` .
 
 ## Options
 ```text
@@ -45,7 +46,7 @@ anything more, but in case you want SVG graphs, you must have
 ## Motivation
 
 > Why did you create this? There are so many tools that do this
-> already?
+> already!
 
 Yes, that's what I thought too. I needed something to watch a few
 websites while I was making some upgrades, but I couldn't find
@@ -55,5 +56,6 @@ configuration file and some brain work. I also looked at nice tools
 like [monit](https://mmonit.com/monit/), but that too needed
 configuration files to be crafted. All I wanted was something *simple*
 that I could install and run. Hence, the idea of `smokeget` was born:
-zero conf, simple web site monitoring with a both ASCII output and
-nice SVG graphics to present in meetings.
+A tool that required zero configuration, that performed simple web
+site monitoring with a both ASCII output and nice SVG graphics to
+present in meetings.
