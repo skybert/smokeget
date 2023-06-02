@@ -42,3 +42,18 @@ anything more, but in case you want SVG graphs, you must have
 # pacman -S gnuplot
 ```
 
+## Motivation
+
+> Why did you create this? There are so many tools that do this
+> already?
+
+Yes, that's what I thought too. I needed something to watch a few
+websites while I was making some upgrades, but I couldn't find
+anything. I really wanted to use
+[smokeping](https://oss.oetiker.ch/smokeping/), but it required a
+configuration file and some brain work. I also looked at nice tools
+like [monit](https://mmonit.com/monit/), but that too needed
+configuration files to be crafted. All I wanted was something *simple*
+that I could install and run. Hence, the idea of `smokeget` was born:
+zero conf, simple web site monitoring with a both ASCII output and
+nice SVG graphis to present in meetings.
