@@ -1,13 +1,14 @@
-# SmokeGET - SVG graph of server response times
-
-- zero conf
-
+# SmokeGET - Zero conf server monitoring with nice graphs
 
 ```text
 $ smokeget --clear https://skybert.net
 SmokeGET graph of https://skybert.net: /tmp/smoke.svg
-.................................................................
+.................................EE...............................
 ```
+
+If the server responds within `--max-time`, a dot is written and the
+response time is noted on the graph. If not, an `E` is written to the
+console.
 
 ## Options
 

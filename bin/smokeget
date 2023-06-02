@@ -17,6 +17,20 @@ sg__is_output_gnuplot() {
   [[ "${sg_output}" == "gnuplot" ]]
 }
 
+sg__print_help() {
+  cat <<EOF
+$(basename "${0}") OPTIONS
+
+OPTIONS
+--clear       Clear data and graphs from previous runs
+--data <file> Data file (optional)
+--help        This screen
+--max-time    Max total time to wait for a response from the server
+--quiet       Don't write any dots or Es in the console
+EOF
+
+}
+
 sg__read_user_input() {
   local opts=
   opts=$(getopt \
@@ -40,7 +54,7 @@ sg__read_user_input() {
   while true; do
     case "$1" in
       -h | --help)
-        print_help;
+        sg__print_help;
         exit 0
         break;;
       -t | --max-time)
@@ -169,6 +183,7 @@ sg__prepare_plot() {
 
   ## TODO remove
   printf "%s\\n" "${_pretty_name}"
+
   local _dir=/tmp/"${_pretty_name}"
   mkdir -p "${_dir}"
 
