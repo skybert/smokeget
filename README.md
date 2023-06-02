@@ -56,4 +56,4 @@ like [monit](https://mmonit.com/monit/), but that too needed
 configuration files to be crafted. All I wanted was something *simple*
 that I could install and run. Hence, the idea of `smokeget` was born:
 zero conf, simple web site monitoring with a both ASCII output and
-nice SVG graphis to present in meetings.
+nice SVG graphics to present in meetings.
