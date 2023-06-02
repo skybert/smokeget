@@ -43,6 +43,21 @@ anything more, but in case you want SVG graphs, you must have
 # pacman -S gnuplot
 ```
 
+Then, install `smokeget` with:
+```text
+$ cd /path/to/src
+$ git clone https://github.com/skybert/smokeget.git
+```
+
+Add this to your `.bashrc` or `.zshrc`:
+```conf
+export PATH=/path/to/src/smokeget/bin:$PATH
+```
+
+Start a new shell or terminal (or run `source <file>` on the file you
+just edited). That's it. You should now be able to run `smokeget`.
+
+
 ## Motivation
 
 > Why did you create this? There are so many tools that do this
