@@ -162,13 +162,11 @@ sg__prepare_plot() {
   _cwd="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
   local _pretty_name=
-  _pretty_name=$(basename "${sg_uri}" | tr -d '?')
-
-  ## TODO remove
-  printf "%s\\n" "${_pretty_name}"
+  _pretty_name=$(sg__pretty_name "${sg_uri}")
 
   local _dir=/tmp/"${_pretty_name}"
   mkdir -p "${_dir}"
+  printf "SmokeGET graph data dir: %s\\n" "${_dir}"
 
   sg__clean_the_slate
 
@@ -208,7 +206,7 @@ main() {
 
   local _not_first=false
   while true; do
-    sg__get_smoke_from_uri "${sg_uri}"
+    sg__get_smoke_from_uri "${sg_uri}" || true
     "${_not_first}" && sg__update_plot
     _not_first=true
     sleep "${sg_interval_in_seconds}"

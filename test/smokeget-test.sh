@@ -2,6 +2,46 @@
 
 ## author: torstein, torstein@skybert.net
 
+test_pretty_name_https() {
+  local input=https://example.com
+  local expected actual
+  expected=example.com
+  actual=$(sg__pretty_name "${input}")
+  assert_equals "${expected}" "${actual}"
+}
+
+test_pretty_name_http() {
+  local input=http://example.com
+  local expected actual
+  expected=example.com
+  actual=$(sg__pretty_name "${input}")
+  assert_equals "${expected}" "${actual}"
+}
+
+test_pretty_name_path() {
+  local input=http://example.com/foo
+  local expected actual
+  expected=example.com__foo
+  actual=$(sg__pretty_name "${input}")
+  assert_equals "${expected}" "${actual}"
+}
+
+test_pretty_name_query_param() {
+  local input=https://example.com/foo?age=2
+  local expected actual
+  expected=example.com__foo
+  actual=$(sg__pretty_name "${input}")
+  assert_equals "${expected}" "${actual}"
+}
+
+test_pretty_name_port() {
+  local input=http://example.com:8080
+  local expected actual
+  expected=example.com8080
+  actual=$(sg__pretty_name "${input}")
+  assert_equals "${expected}" "${actual}"
+}
+
 test_time_to_seconds() {
   local input="0 0.008"
   local expected actual

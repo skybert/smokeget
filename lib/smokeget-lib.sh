@@ -4,6 +4,19 @@
 
 sg_output=gnuplot
 
+sg__pretty_name() {
+  local _uri=$1
+  local _result=$_uri
+
+  printf "%s\\n" "${_result}" |
+    sed -r \
+        -e 's#http://##' \
+        -e 's#https://##' \
+        -e 's#[/]#__#g' \
+        -e 's#[:]##g' \
+        -e 's#[\?].*##g'
+}
+
 sg__time_to_seconds() {
   local _time=$1
 
