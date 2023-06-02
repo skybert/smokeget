@@ -2,6 +2,7 @@
 
 <img src="smokeget.svg" alt="smokeget graph"/>
 
+## Usage
 ```text
 $ smokeget --clear https://skybert.net
 SmokeGET graph data dir: /tmp/smokeget/skybert.net
@@ -14,6 +15,16 @@ response time is noted on the graph. If not, an `E` is written to the
 console.
 
 ## Options
+```text
+$ smokeget OPTIONS
+
+OPTIONS
+--clear       Clear data and graphs from previous runs
+--data <file> Data file (optional)
+--help        This screen
+--max-time    Max total time to wait for a response from the server
+--quiet       Don't write any dots or Es in the console
+```
 
 
 ## Installation
@@ -31,11 +42,3 @@ anything more, but in case you want SVG graphs, you must have
 # pacman -S gnuplot
 ```
 
-
-## Example use
-
-```text
-$ smokeget --clear https://edition.cnn.com
-SmokeGET graph of https://edition.cnn.com: /tmp/smoke.svg
-.................................................................
-```
